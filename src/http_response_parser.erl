@@ -1,5 +1,8 @@
 -module(http_response_parser).
 -export([http_parser/1, bench/0, test/0]).
+-ifdef(TEST).
+-export([parse_headers/1, parse_status_line/1]).
+-endif.
 
 %% Constants defined for test responses to simulate different HTTP response scenarios.
 %% These binaries include status lines, headers, and bodies formatted according to the HTTP protocol.
