@@ -98,17 +98,37 @@ sequenceDiagram
     participant parse_status_line
     participant parse_headers
 
-    Client->>Parser: HTTP Response (Binary)
-    Parser->>split_status_and_body: Split binary into headers and body
-    split_status_and_body-->>Parser: Headers Binary, Body Binary
+    Client->>+Parser: HTTP Response (Binary)
+    Parser->>+split_status_and_body: Split binary into headers and body
+    split_status_and_body-->>-Parser: Headers Binary, Body Binary
 
-    Parser->>parse_status_line: Parse status line from Headers Binary
-    parse_status_line-->>Parser: Status, Reason
+    Parser->>+parse_status_line: Parse status line from Headers Binary
+    parse_status_line-->>-Parser: Status, Reason
 
-    Parser->>parse_headers: Parse headers into key-value pairs
-    parse_headers-->>Parser: Headers List
+    Parser->>+parse_headers: Parse headers into key-value pairs
+    parse_headers-->>-Parser: Headers List
 
     Parser->>Client: {Status, Reason, Headers List, Body Binary}
+
+```
+## Flow Chart 
+```mermaid
+flowchart TD
+    A[Start] --> B{Is HTTP Response?}
+    B -- Yes --> C[Parse Status Line]
+    B -- No --> D[Return Error: Not a HTTP Response]
+    C --> E{Is Status Line Valid?}
+    E -- Yes --> F[Parse Headers]
+    E -- No --> G[Return Error: Invalid Status Line]
+    F --> H{Are Headers Valid?}
+    H -- Yes --> I[Split Headers and Body]
+    H -- No --> J[Return Error: Invalid Headers]
+    I --> K{Is Body Present?}
+    K -- Yes --> L[Parse Body]
+    K -- No --> M[No Body to Parse]
+    L --> N[Assemble HTTP Response Object]
+    M --> N[Assemble HTTP Response Object]
+    N --> O[End]
 
 ```
 
