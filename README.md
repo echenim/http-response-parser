@@ -16,7 +16,8 @@ The `http_response_parser` module transforms binary strings of HTTP responses in
     - [split_status_and_body/1](#split_status_and_body1)
     - [parse_status_line/1](#parse_status_line1)
     - [parse_headers/1](#parse_headers1)
-5. [Conclusion](#conclusion)
+5. [Flow Diagram](#flow-diagram)
+6. [Conclusion](#conclusion)
 
 ## Public APIs
 
@@ -85,6 +86,31 @@ Executes predefined tests to validate the parser's accuracy and robustness in ha
 **Purpose:** To transform the header section of an HTTP response into a standardized list of key-value pairs.
 
 **Execution:** Splits the header lines and further each line into key and value pairs, filtering and converting valid headers into a structured list.
+
+## Flow Diagram
+This diagram illustrates the sequence of operations performed by the HTTP 1.1 Response Parser. Starting with the client sending a binary HTTP response to the parser, the parser then sequentially splits the binary into headers and body, parses the status line to extract the status code and reason phrase, parses the headers into a list of key-value pairs, and finally, returns the structured response back to the client.
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Parser
+    participant split_status_and_body
+    participant parse_status_line
+    participant parse_headers
+
+    Client->>Parser: HTTP Response (Binary)
+    Parser->>split_status_and_body: Split binary into headers and body
+    split_status_and_body-->>Parser: Headers Binary, Body Binary
+
+    Parser->>parse_status_line: Parse status line from Headers Binary
+    parse_status_line-->>Parser: Status, Reason
+
+    Parser->>parse_headers: Parse headers into key-value pairs
+    parse_headers-->>Parser: Headers List
+
+    Parser->>Client: {Status, Reason, Headers List, Body Binary}
+
+```
 
 ## Conclusion
 
